@@ -11,7 +11,10 @@ import {
   resolveSessionAgentId,
   resolveAgentSkillsFilter,
 } from "../../agents/agent-scope.js";
-import { resolveDeterministicGatewayReply } from "../../agents/deterministic-gateway-model.js";
+import {
+  DETERMINISTIC_NOTE_MODEL,
+  resolveDeterministicGatewayReply,
+} from "../../agents/deterministic-gateway-model.js";
 import { resolveModelRefFromString } from "../../agents/model-selection.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { DEFAULT_AGENT_WORKSPACE_DIR, ensureAgentWorkspace } from "../../agents/workspace.js";
@@ -25,6 +28,7 @@ import {
   buildAgentHookContextChannelFields,
   buildAgentHookContextIdentityFields,
 } from "../../plugins/hook-agent-context.js";
+import { getGlobalPluginRegistry } from "../../plugins/hook-runner-global.js";
 import { defaultRuntime } from "../../runtime.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import { resolveCommandTurnTargetSessionKey } from "../command-turn-context.js";
@@ -1003,7 +1007,16 @@ export async function getReplyFromConfig(
     }
   }
 
-  const deterministicReply = resolveDeterministicGatewayReply(runProvider, runModel);
+  const notePluginLoaded =
+    runProvider.trim().toLowerCase() === "dummy" &&
+    runModel.trim().toLowerCase() === DETERMINISTIC_NOTE_MODEL &&
+    (getGlobalPluginRegistry()?.plugins.some(
+      (plugin) => plugin.id === "note" && plugin.status === "loaded",
+    ) ??
+      false);
+  const deterministicReply = resolveDeterministicGatewayReply(runProvider, runModel, {
+    notePluginLoaded,
+  });
   if (deterministicReply) return { text: deterministicReply };
 
   // ctx.MediaStaged=true means the caller (e.g. chat.send RPC) already staged
