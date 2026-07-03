@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   DETERMINISTIC_GATEWAY_REPLY,
-  DETERMINISTIC_NOTE_MISSING_REPLY,
-  DETERMINISTIC_NOTE_READY_REPLY,
   isDeterministicGatewayModel,
-  resolveDeterministicGatewayReply,
+  isDeterministicNoteModel,
 } from "./deterministic-gateway-model.js";
 
 describe("deterministic gateway models", () => {
@@ -14,14 +12,11 @@ describe("deterministic gateway models", () => {
     expect(isDeterministicGatewayModel("dummy", "other")).toBe(false);
   });
 
-  it("returns the model-specific deterministic response", () => {
-    expect(resolveDeterministicGatewayReply("dummy", "dummy")).toBe(DETERMINISTIC_GATEWAY_REPLY);
-    expect(resolveDeterministicGatewayReply("dummy", "note")).toBe(
-      DETERMINISTIC_NOTE_MISSING_REPLY,
+  it("loads the dummy response and identifies the NOTE model", () => {
+    expect(DETERMINISTIC_GATEWAY_REPLY).toBe(
+      "Not a valid command. Use /tools to see available commands.",
     );
-    expect(resolveDeterministicGatewayReply("dummy", "note", { notePluginLoaded: true })).toBe(
-      DETERMINISTIC_NOTE_READY_REPLY,
-    );
-    expect(resolveDeterministicGatewayReply("dummy", "other")).toBeUndefined();
+    expect(isDeterministicNoteModel("dummy", "note")).toBe(true);
+    expect(isDeterministicNoteModel("dummy", "dummy")).toBe(false);
   });
 });

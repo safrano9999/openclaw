@@ -1,3 +1,1 @@
 Not a valid command. Use /tools to see available commands.
-NOTE ✅
-NOTE is not installed. Please install: https://github.com/safrano9999/NOTE/releases/latest/download/note-latest.zip
