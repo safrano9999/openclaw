@@ -1,0 +1,2 @@
+Not a valid command. Use /tools to see available commands.
+Note AI is configured. This gateway is running in deterministic mode. Use /tools to view available tools.

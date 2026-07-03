@@ -1,13 +1,18 @@
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const repliesPath = fileURLToPath(new URL("./deterministic-gateway-replies.txt", import.meta.url));
+const [gatewayReply, noteReply] = fs.readFileSync(repliesPath, "utf8").trimEnd().split(/\r?\n/u);
+if (!gatewayReply || !noteReply)
+  throw new Error(`Invalid deterministic replies file: ${repliesPath}`);
+
 export const DETERMINISTIC_GATEWAY_PROVIDER = "dummy";
 export const DETERMINISTIC_GATEWAY_MODEL = "dummy";
 export const DETERMINISTIC_GATEWAY_MODEL_REF = `${DETERMINISTIC_GATEWAY_PROVIDER}/${DETERMINISTIC_GATEWAY_MODEL}`;
 export const DETERMINISTIC_NOTE_MODEL = "note";
 export const DETERMINISTIC_NOTE_MODEL_REF = `${DETERMINISTIC_GATEWAY_PROVIDER}/${DETERMINISTIC_NOTE_MODEL}`;
-export const DETERMINISTIC_GATEWAY_REPLY =
-  "No AI is configured. This gateway is running in deterministic mode. Use /tools to view available tools.";
-export const DETERMINISTIC_NOTE_REPLY =
-  "Note AI is configured. This gateway is running in deterministic mode. Use /tools to view available tools.";
-
+export const DETERMINISTIC_GATEWAY_REPLY = gatewayReply;
+export const DETERMINISTIC_NOTE_REPLY = noteReply;
 export function isDeterministicGatewayModel(provider: string, model: string): boolean {
   return (
     provider.trim().toLowerCase() === DETERMINISTIC_GATEWAY_PROVIDER &&
