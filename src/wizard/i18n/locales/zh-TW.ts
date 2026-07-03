@@ -190,6 +190,7 @@ export const zh_TW = {
       defaultSet: "預設模型已設定為 {model}",
       defaultSetForAgent: 'agent "{agent}" 的預設模型已設定為 {model}。',
       deterministicGateway: "dummy/dummy - 無 AI - 僅確定性 Gateway",
+      deterministicNote: "dummy/note - deterministic NOTE model",
       enterManually: "手動輸入模型",
       filterByProvider: "按 provider 篩選模型",
       keepCurrent: "保留目前值（{value}）",

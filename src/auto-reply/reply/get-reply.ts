@@ -11,10 +11,7 @@ import {
   resolveSessionAgentId,
   resolveAgentSkillsFilter,
 } from "../../agents/agent-scope.js";
-import {
-  DETERMINISTIC_GATEWAY_REPLY,
-  isDeterministicGatewayModel,
-} from "../../agents/deterministic-gateway-model.js";
+import { resolveDeterministicGatewayReply } from "../../agents/deterministic-gateway-model.js";
 import { resolveModelRefFromString } from "../../agents/model-selection.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { DEFAULT_AGENT_WORKSPACE_DIR, ensureAgentWorkspace } from "../../agents/workspace.js";
@@ -1006,9 +1003,8 @@ export async function getReplyFromConfig(
     }
   }
 
-  if (isDeterministicGatewayModel(runProvider, runModel)) {
-    return { text: DETERMINISTIC_GATEWAY_REPLY };
-  }
+  const deterministicReply = resolveDeterministicGatewayReply(runProvider, runModel);
+  if (deterministicReply) return { text: deterministicReply };
 
   // ctx.MediaStaged=true means the caller (e.g. chat.send RPC) already staged
   // synchronously so it could surface 5xx before respond(). Skipping here keeps

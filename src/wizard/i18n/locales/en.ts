@@ -192,6 +192,7 @@ export const en = {
       defaultSet: "Default model set to {model}",
       defaultSetForAgent: 'Default model set to {model} for agent "{agent}".',
       deterministicGateway: "dummy/dummy - No AI - deterministic gateway only",
+      deterministicNote: "dummy/note - deterministic NOTE model",
       enterManually: "Enter model manually",
       filterByProvider: "Filter models by provider",
       keepCurrent: "Keep current ({value})",

@@ -3,7 +3,10 @@ import { normalizeOptionalString } from "@openclaw/normalization-core/string-coe
 import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
 import { resolveDefaultAgentDir } from "../agents/agent-scope.js";
 import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../agents/defaults.js";
-import { DETERMINISTIC_GATEWAY_MODEL_REF } from "../agents/deterministic-gateway-model.js";
+import {
+  DETERMINISTIC_GATEWAY_MODEL_REF,
+  DETERMINISTIC_NOTE_MODEL_REF,
+} from "../agents/deterministic-gateway-model.js";
 import { resolveVisibleModelCatalog } from "../agents/model-catalog-visibility.js";
 import { loadModelCatalog } from "../agents/model-catalog.js";
 import type { ModelCatalogEntry } from "../agents/model-catalog.js";
@@ -65,9 +68,19 @@ function deterministicGatewayOption(): WizardSelectOption {
   };
 }
 
+function deterministicNoteOption(): WizardSelectOption {
+  return {
+    value: DETERMINISTIC_NOTE_MODEL_REF,
+    label: t("wizard.model.deterministicNote"),
+  };
+}
+
 function addDeterministicGatewayOption(options: WizardSelectOption[]): void {
   if (!options.some((option) => option.value === DETERMINISTIC_GATEWAY_MODEL_REF)) {
     options.push(deterministicGatewayOption());
+  }
+  if (!options.some((option) => option.value === DETERMINISTIC_NOTE_MODEL_REF)) {
+    options.push(deterministicNoteOption());
   }
 }
 
@@ -964,8 +977,11 @@ export async function promptDefaultModel(
       initialValue: configuredRaw || resolvedKey || undefined,
     });
   }
-  if (selectedValue === DETERMINISTIC_GATEWAY_MODEL_REF) {
-    return { model: DETERMINISTIC_GATEWAY_MODEL_REF };
+  if (
+    selectedValue === DETERMINISTIC_GATEWAY_MODEL_REF ||
+    selectedValue === DETERMINISTIC_NOTE_MODEL_REF
+  ) {
+    return { model: selectedValue };
   }
 
   const providerPluginResult = await maybeHandleProviderPluginSelection({
