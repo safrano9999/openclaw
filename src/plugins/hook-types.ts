@@ -282,6 +282,19 @@ export type PluginHookContextWindowSource =
 
 export type PluginHookBeforeAgentReplyEvent = {
   cleanedBody: string;
+  mediaPaths?: string[];
+  mediaTypes?: string[];
+  location?: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+    name?: string;
+    address?: string;
+    source?: string;
+    isLive?: boolean;
+    caption?: string;
+  };
+  structuredContext?: Array<{ label: string; source?: string; type?: string; payload: unknown }>;
 };
 
 export type PluginHookBeforeAgentReplyResult = {

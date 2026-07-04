@@ -976,9 +976,46 @@ export async function getReplyFromConfig(
         normalizeOptionalString(sessionCtx.NativeChannelId) ??
         normalizeOptionalString(sessionCtx.ChatId);
       const hookTrigger = opts?.isHeartbeat ? "heartbeat" : "user";
+      const hookMediaPaths = Array.isArray(ctx.MediaPaths)
+        ? ctx.MediaPaths.filter(
+            (value): value is string => typeof value === "string" && Boolean(value.trim()),
+          )
+        : typeof ctx.MediaPath === "string" && ctx.MediaPath.trim()
+          ? [ctx.MediaPath]
+          : [];
+      const hookMediaTypes = Array.isArray(ctx.MediaTypes)
+        ? ctx.MediaTypes.filter(
+            (value): value is string => typeof value === "string" && Boolean(value.trim()),
+          )
+        : typeof ctx.MediaType === "string" && ctx.MediaType.trim()
+          ? [ctx.MediaType]
+          : [];
+      const hookLocation =
+        typeof ctx.LocationLat === "number" && typeof ctx.LocationLon === "number"
+          ? {
+              latitude: ctx.LocationLat,
+              longitude: ctx.LocationLon,
+              ...(typeof ctx.LocationAccuracy === "number"
+                ? { accuracy: ctx.LocationAccuracy }
+                : {}),
+              ...(ctx.LocationName ? { name: ctx.LocationName } : {}),
+              ...(ctx.LocationAddress ? { address: ctx.LocationAddress } : {}),
+              ...(ctx.LocationSource ? { source: ctx.LocationSource } : {}),
+              ...(typeof ctx.LocationIsLive === "boolean" ? { isLive: ctx.LocationIsLive } : {}),
+              ...(ctx.LocationCaption ? { caption: ctx.LocationCaption } : {}),
+            }
+          : undefined;
       const hookResult = await traceGetReplyPhase("reply.before_agent_reply_hooks", () =>
         hookRunner.runBeforeAgentReply(
-          { cleanedBody },
+          {
+            cleanedBody,
+            ...(hookMediaPaths.length > 0 ? { mediaPaths: hookMediaPaths } : {}),
+            ...(hookMediaTypes.length > 0 ? { mediaTypes: hookMediaTypes } : {}),
+            ...(hookLocation ? { location: hookLocation } : {}),
+            ...(ctx.UntrustedStructuredContext?.length
+              ? { structuredContext: ctx.UntrustedStructuredContext }
+              : {}),
+          },
           {
             agentId,
             sessionKey: agentSessionKey,

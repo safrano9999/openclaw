@@ -178,6 +178,28 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
       expect.objectContaining({ modelProviderId: "dummy", modelId: "note" }),
     );
   });
+
+  it("passes inbound media and location data to plugin hooks", async () => {
+    mocks.runBeforeAgentReply.mockResolvedValue({ handled: true, reply: { text: "saved" } });
+    const ctx = buildGetReplyGroupCtx({
+      MediaPaths: ["/tmp/photo.jpg"],
+      MediaTypes: ["image/jpeg"],
+      LocationLat: 48.2,
+      LocationLon: 16.37,
+      LocationName: "Vienna",
+    });
+
+    await getReplyFromConfig(ctx, undefined, {});
+
+    expect(mocks.runBeforeAgentReply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mediaPaths: ["/tmp/photo.jpg"],
+        mediaTypes: ["image/jpeg"],
+        location: expect.objectContaining({ latitude: 48.2, longitude: 16.37, name: "Vienna" }),
+      }),
+      expect.anything(),
+    );
+  });
 });
 afterEach(() => {
   vi.unstubAllEnvs();
