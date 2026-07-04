@@ -984,6 +984,8 @@ export async function getReplyFromConfig(
             sessionKey: agentSessionKey,
             sessionId,
             workspaceDir,
+            modelProviderId: runProvider,
+            modelId: runModel,
             trigger: hookTrigger,
             ...buildAgentHookContextChannelFields({
               sessionKey: agentSessionKey,

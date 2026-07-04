@@ -109,6 +109,8 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
           sessionKey?: string;
           sessionId?: string;
           workspaceDir?: string;
+          modelProviderId?: string;
+          modelId?: string;
           messageProvider?: string;
           trigger?: string;
           channelId?: string;
@@ -127,6 +129,8 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
     expect(hookCtx.sessionKey).toBe("agent:main:telegram:-100123");
     expect(hookCtx.sessionId).toBe("session-1");
     expect(hookCtx.workspaceDir).toBe("/tmp/workspace");
+    expect(hookCtx.modelProviderId).toBeTruthy();
+    expect(hookCtx.modelId).toBeTruthy();
     expect(hookCtx.messageProvider).toBe("telegram");
     expect(hookCtx.trigger).toBe("user");
     expect(hookCtx.channel).toBe("telegram");
@@ -158,6 +162,21 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
 
     expect(result).toEqual({ text: DETERMINISTIC_GATEWAY_REPLY });
     expect(mocks.runBeforeAgentReply).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes the deterministic NOTE model to plugin hooks", async () => {
+    mocks.resolveReplyDirectives.mockResolvedValue(
+      createContinueDirectivesResult({ provider: "dummy", model: "note" }),
+    );
+    mocks.runBeforeAgentReply.mockResolvedValue({ handled: true, reply: { text: "saved" } });
+
+    const result = await getReplyFromConfig(buildGetReplyGroupCtx(), undefined, {});
+
+    expect(result).toEqual({ text: "saved" });
+    expect(mocks.runBeforeAgentReply).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ modelProviderId: "dummy", modelId: "note" }),
+    );
   });
 });
 afterEach(() => {
