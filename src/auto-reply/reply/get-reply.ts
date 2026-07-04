@@ -977,9 +977,9 @@ export async function getReplyFromConfig(
         normalizeOptionalString(sessionCtx.ChatId);
       const hookTrigger = opts?.isHeartbeat ? "heartbeat" : "user";
       const hookUserText =
-        normalizeOptionalString(ctx.BodyForCommands) ??
         normalizeOptionalString(ctx.CommandBody) ??
-        normalizeOptionalString(ctx.RawBody);
+        normalizeOptionalString(ctx.RawBody) ??
+        normalizeOptionalString(ctx.BodyForCommands);
       const hookMediaPaths = Array.isArray(ctx.MediaPaths)
         ? ctx.MediaPaths.filter(
             (value): value is string => typeof value === "string" && Boolean(value.trim()),
