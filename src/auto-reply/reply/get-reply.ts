@@ -976,6 +976,10 @@ export async function getReplyFromConfig(
         normalizeOptionalString(sessionCtx.NativeChannelId) ??
         normalizeOptionalString(sessionCtx.ChatId);
       const hookTrigger = opts?.isHeartbeat ? "heartbeat" : "user";
+      const hookUserText =
+        normalizeOptionalString(ctx.BodyForCommands) ??
+        normalizeOptionalString(ctx.CommandBody) ??
+        normalizeOptionalString(ctx.RawBody);
       const hookMediaPaths = Array.isArray(ctx.MediaPaths)
         ? ctx.MediaPaths.filter(
             (value): value is string => typeof value === "string" && Boolean(value.trim()),
@@ -1009,8 +1013,10 @@ export async function getReplyFromConfig(
         hookRunner.runBeforeAgentReply(
           {
             cleanedBody,
+            ...(hookUserText ? { userText: hookUserText } : {}),
             ...(hookMediaPaths.length > 0 ? { mediaPaths: hookMediaPaths } : {}),
             ...(hookMediaTypes.length > 0 ? { mediaTypes: hookMediaTypes } : {}),
+            ...(ctx.MediaWorkspaceDir ? { mediaWorkspaceDir: ctx.MediaWorkspaceDir } : {}),
             ...(hookLocation ? { location: hookLocation } : {}),
             ...(ctx.UntrustedStructuredContext?.length
               ? { structuredContext: ctx.UntrustedStructuredContext }

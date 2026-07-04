@@ -182,8 +182,10 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
   it("passes inbound media and location data to plugin hooks", async () => {
     mocks.runBeforeAgentReply.mockResolvedValue({ handled: true, reply: { text: "saved" } });
     const ctx = buildGetReplyGroupCtx({
+      BodyForCommands: "photo caption",
       MediaPaths: ["/tmp/photo.jpg"],
       MediaTypes: ["image/jpeg"],
+      MediaWorkspaceDir: "/tmp/workspace",
       LocationLat: 48.2,
       LocationLon: 16.37,
       LocationName: "Vienna",
@@ -193,8 +195,10 @@ describe("getReplyFromConfig before_agent_reply wiring", () => {
 
     expect(mocks.runBeforeAgentReply).toHaveBeenCalledWith(
       expect.objectContaining({
+        userText: "photo caption",
         mediaPaths: ["/tmp/photo.jpg"],
         mediaTypes: ["image/jpeg"],
+        mediaWorkspaceDir: "/tmp/workspace",
         location: expect.objectContaining({ latitude: 48.2, longitude: 16.37, name: "Vienna" }),
       }),
       expect.anything(),

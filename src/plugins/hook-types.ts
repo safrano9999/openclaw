@@ -282,8 +282,10 @@ export type PluginHookContextWindowSource =
 
 export type PluginHookBeforeAgentReplyEvent = {
   cleanedBody: string;
+  userText?: string;
   mediaPaths?: string[];
   mediaTypes?: string[];
+  mediaWorkspaceDir?: string;
   location?: {
     latitude: number;
     longitude: number;
